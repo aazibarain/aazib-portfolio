@@ -25,6 +25,7 @@ export const Desktop: React.FC = () => {
   );
   const [focusedWindow, setFocusedWindow] = useState<string | null>(null);
   const [time, setTime] = useState("00:00");
+  const [iconsPerColumn, setIconsPerColumn] = useState(4);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,6 +33,20 @@ export const Desktop: React.FC = () => {
       setTime(now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const calculateIconsPerColumn = () => {
+      // AppIcon is ~120px tall (icon + text + padding + gap). Taskbar is 80px.
+      const availableHeight = window.innerHeight - 80 - 40; // minus taskbar and padding
+      const iconHeight = 120;
+      const num = Math.max(1, Math.floor(availableHeight / iconHeight));
+      setIconsPerColumn(num);
+    };
+
+    calculateIconsPerColumn();
+    window.addEventListener("resize", calculateIconsPerColumn);
+    return () => window.removeEventListener("resize", calculateIconsPerColumn);
   }, []);
 
   const openWindow = (
@@ -158,9 +173,12 @@ export const Desktop: React.FC = () => {
   const projectIcons = projectsData.map((p) => ({ id: `project-${p.name}`, name: p.name, icon: "📦", onDouble: () => openWindow(`project-${p.name}`, p.name, "project", p) }));
 
   const icons = [...baseIcons, ...projectIcons];
-  const ITEMS_PER_COLUMN = 4;
-  const col1 = icons.slice(0, ITEMS_PER_COLUMN);
-  const col2 = icons.slice(ITEMS_PER_COLUMN);
+
+  // Split icons into columns based on screen height
+  const columns: typeof icons[] = [];
+  for (let i = 0; i < icons.length; i += iconsPerColumn) {
+    columns.push(icons.slice(i, i + iconsPerColumn));
+  }
 
   return (
     <div className="w-full h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black overflow-hidden relative">
@@ -169,21 +187,13 @@ export const Desktop: React.FC = () => {
       {/* Desktop Background */}
       <div className="w-full h-full pb-20 pt-4 px-4 overflow-auto relative z-10">
         <div className="absolute left-6 top-8 flex gap-6">
-          <div className="flex flex-col gap-6">
-            {col1.map((it, idx) => (
-              <AppIcon key={it.id || "col1-" + idx} name={it.name} icon={it.icon} onDoubleClick={it.onDouble} />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-6">
-            {col2.length > 0 ? (
-              col2.map((it, idx) => (
-                <AppIcon key={it.id || "col2-" + idx} name={it.name} icon={it.icon} onDoubleClick={it.onDouble} />
-              ))
-            ) : (
-              <div className="w-20" />
-            )}
-          </div>
+          {columns.map((col, colIdx) => (
+            <div key={`col-${colIdx}`} className="flex flex-col gap-6">
+              {col.map((it, idx) => (
+                <AppIcon key={it.id || idx} name={it.name} icon={it.icon} onDoubleClick={it.onDouble} />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
 
