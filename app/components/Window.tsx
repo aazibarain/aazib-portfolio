@@ -38,6 +38,32 @@ export const Window: React.FC<WindowProps> = ({
     onFocus(id);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Only drag on title bar, not on content
+    if (!(e.target as HTMLElement).closest(".title-bar")) return;
+    if ((e.target as HTMLElement).closest("button")) return;
+    setIsDragging(true);
+    const touch = e.touches[0];
+    setDragOffset({
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y,
+    });
+    onFocus(id);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    setPosition({
+      x: touch.clientX - dragOffset.x,
+      y: touch.clientY - dragOffset.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     setPosition({
@@ -65,11 +91,14 @@ export const Window: React.FC<WindowProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Title Bar */}
       <div
-        className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 flex items-center justify-between cursor-move select-none"
+        className="title-bar bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 flex items-center justify-between cursor-move select-none touch-none"
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       >
         <span className="text-white font-bold text-sm flex items-center gap-2">
           {title}
@@ -91,7 +120,13 @@ export const Window: React.FC<WindowProps> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto bg-gray-900 text-gray-100 p-4">
+      <div
+        className="flex-1 overflow-auto bg-gray-900 text-gray-100 p-4"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'auto',
+        }}
+      >
         {content}
       </div>
     </div>
