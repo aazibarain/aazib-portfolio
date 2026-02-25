@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0d0d0d;
+  --foreground: #00ff66;
+  --terminal-green: #00ff66;
+  --terminal-dim-green: #00aa44;
+  --terminal-accent: #ffcc00;
+  --terminal-error: #ff0033;
+  --font-mono: "Fira Code", "JetBrains Mono", monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-terminal-green: var(--terminal-green);
+  --color-terminal-dim: var(--terminal-dim-green);
+  --color-terminal-accent: var(--terminal-accent);
+  --color-terminal-error: var(--terminal-error);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Remove default scrollbar styling for terminal feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-dim-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-green);
+}
+
+/* Global animations */
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 5px var(--terminal-green);
+  }
+  50% {
+    text-shadow: 0 0 10px var(--terminal-green), 0 0 20px rgba(0, 255, 102, 0.5);
+  }
+}
