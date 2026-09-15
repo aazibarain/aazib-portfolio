@@ -8,7 +8,7 @@ export interface EducationItem {
 export const aboutData = {
   name: "Aazib Abdullah",
   role: "AI Engineer",
-  image: "/profile.jpg",
+  image: "/profile.png",
   location: "Islamabad, Pakistan",
   bio: "AI Engineer with a strong foundation in deep learning, machine learning, and backend-focused full-stack development. I build and deploy data-driven, model-backed applications, with hands-on work across medical imaging, NLP, computer vision, and adversarial machine learning.",
   focus:
