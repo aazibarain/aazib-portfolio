@@ -261,10 +261,52 @@ export const Desktop = () => {
           <span className="hidden sm:inline">Double-click an icon · terminal accepts commands</span>
           <span className="sm:hidden">Tap an icon to open</span>
         </div>
-        <div className="grid w-fit grid-cols-3 gap-x-1 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-          {[...baseIcons, ...projectIcons].map((icon) => (
-            <AppIcon key={icon.id} name={icon.name} icon={icon.icon} onOpen={icon.onOpen} />
-          ))}
+        <div className="flex w-fit flex-col items-start gap-4 xl:flex-row">
+          <section className="rounded-2xl border border-sky-300/25 bg-sky-400/[0.055] p-2 shadow-[0_0_32px_rgba(56,189,248,0.07)] backdrop-blur-sm sm:p-3">
+            <div className="mb-2 flex items-center justify-between gap-6 px-2">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-sky-200 sm:text-xs">
+                <span className="size-1.5 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(125,211,252,0.9)]" />
+                Core apps
+              </div>
+              <span className="rounded-full border border-sky-300/20 bg-sky-300/10 px-2 py-0.5 text-[9px] text-sky-200/80">
+                06 system
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-x-1 gap-y-1">
+              {baseIcons.map((icon) => (
+                <AppIcon
+                  key={icon.id}
+                  name={icon.name}
+                  icon={icon.icon}
+                  onOpen={icon.onOpen}
+                  variant="core"
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.035] p-2 shadow-[0_0_32px_rgba(16,185,129,0.06)] backdrop-blur-sm sm:p-3">
+            <div className="mb-2 flex items-center justify-between gap-6 px-2">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200 sm:text-xs">
+                <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
+                Projects
+              </div>
+              <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[9px] text-emerald-200/80">
+                09 repos
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-x-1 gap-y-1">
+              {projectIcons.map((icon) => (
+                <AppIcon
+                  key={icon.id}
+                  name={icon.name}
+                  icon={icon.icon}
+                  onOpen={icon.onOpen}
+                  variant="project"
+                />
+              ))}
+            </div>
+          </section>
         </div>
       </div>
 
