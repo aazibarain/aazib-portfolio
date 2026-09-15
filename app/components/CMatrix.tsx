@@ -13,24 +13,29 @@ export const CMatrix: React.FC = () => {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    const dpr = window.devicePixelRatio || 1;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const fontSize = 14;
+    let drops: number[] = [];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const setSize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const columns = Math.max(1, Math.floor(width / fontSize));
+      drops = new Array(columns)
+        .fill(0)
+        .map(() => Math.random() * (height / fontSize));
     };
 
     setSize();
 
     const chars = "@#¥%&*+=-abcdefghijklmnopqrstuvwxyz0123456789".split("");
-    const fontSize = 14;
-    const columns = Math.max(1, Math.floor(width / fontSize));
-    const drops = new Array(columns).fill(0).map(() => Math.random() * (height / fontSize));
 
     const onResize = () => setSize();
     window.addEventListener("resize", onResize);
@@ -41,9 +46,16 @@ export const CMatrix: React.FC = () => {
     window.addEventListener("mousemove", handleMove);
 
     let raf = 0;
-    const draw = () => {
+    let previousFrame = 0;
+    const draw = (timestamp = 0) => {
+      if (!reducedMotion.matches && timestamp - previousFrame < 32) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+      previousFrame = timestamp;
+
       // semi-transparent overlay for trail effect
-      ctx.fillStyle = "rgba(0,0,0,0.06)";
+      ctx.fillStyle = reducedMotion.matches ? "rgba(0,0,0,0.88)" : "rgba(0,0,0,0.1)";
       ctx.fillRect(0, 0, width, height);
 
       ctx.font = `${fontSize}px monospace`;
@@ -71,7 +83,7 @@ export const CMatrix: React.FC = () => {
         drops[i] = drops[i] > height / fontSize + Math.random() * 80 ? 0 : drops[i] + 0.8 + Math.random() * 1.2;
       }
 
-      raf = requestAnimationFrame(draw);
+      if (!reducedMotion.matches) raf = requestAnimationFrame(draw);
     };
 
     draw();

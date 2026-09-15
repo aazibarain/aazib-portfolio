@@ -1,20 +1,49 @@
+export interface EducationItem {
+  institution: string;
+  degree: string;
+  year: string;
+  details?: string;
+}
+
 export const aboutData = {
   name: "Aazib Abdullah",
-  role: "Software Developer",
-  bio: "Software Developer with strong foundations in OOP and Data Structures & Algorithms, focused on building scalable, efficient systems and continuously learning modern technologies to solve real-world problems.",
+  role: "AI Engineer",
+  image: "/profile.jpg",
+  location: "Islamabad, Pakistan",
+  bio: "AI Engineer with a strong foundation in deep learning, machine learning, and backend-focused full-stack development. I build and deploy data-driven, model-backed applications, with hands-on work across medical imaging, NLP, computer vision, and adversarial machine learning.",
+  focus:
+    "Currently exploring generative AI and computer vision techniques with a research mindset, while turning experiments into production-ready web applications.",
   education: [
     {
-      institution: "National University of Computing and Emerging Sciences (NUCES)",
-      degree: "Bachelor's in Computer Science",
-      year: "2026",
-      details: "GPA: 2.5/4.0",
+      institution:
+        "NUST - College of Electrical and Mechanical Engineering, Rawalpindi",
+      degree: "MS Artificial Intelligence",
+      year: "2026 - Present",
     },
+    {
+      institution:
+        "FAST - National University of Computer and Emerging Sciences, Islamabad",
+      degree: "BS Computer Science",
+      year: "2022 - 2026",
+    },
+    {
+      institution: "New Life Public Higher Secondary College, Kunri, Sindh",
+      degree: "F.Sc - Physics, Chemistry, Mathematics",
+      year: "2020 - 2022",
+    },
+    {
+      institution: "Sarghodian Spirit Trust Public School, Tando Allah Yar",
+      degree: "O Levels - Physics, Chemistry, Computer Science",
+      year: "2017 - 2020",
+    },
+  ] satisfies EducationItem[],
+  certifications: [
+    "IBM AI Engineering Professional Certificate",
+    "Securing Generative AI",
+    ".NET Full Stack Developer Specialization",
   ],
   achievements: [
-    "Built full-stack and desktop applications using C++, Java, and modern web technologies.",
-    "Delivered freelance software solutions for real clients on Fiverr and Upwork.",
-    "Developed database-driven systems and socket-based client–server applications.",
-    "Designed scalable software using strong OOP and DSA principles.",
-    "Open source contributor",
+    "Secured 3rd position in a national-level mathematics competition.",
+    "Achieved Level 1 Seller status on Fiverr through consistent, high-quality delivery.",
   ],
 };

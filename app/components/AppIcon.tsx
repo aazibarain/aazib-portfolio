@@ -1,33 +1,44 @@
 "use client";
-import React, { useState } from "react";
+
+import type { ReactNode } from "react";
+import { useState } from "react";
 
 interface AppIconProps {
   name: string;
-  icon: string;
-  onDoubleClick: () => void;
+  icon: ReactNode;
+  onOpen: () => void;
 }
 
-export const AppIcon: React.FC<AppIconProps> = ({
-  name,
-  icon,
-  onDoubleClick,
-}) => {
+export const AppIcon = ({ name, icon, onOpen }: AppIconProps) => {
   const [isSelected, setIsSelected] = useState(false);
 
   return (
-    <div
-      className={`flex flex-col items-center gap-2 p-4 rounded cursor-pointer transition ${
+    <button
+      type="button"
+      className={`group flex w-[92px] flex-col items-center gap-2 rounded-xl border p-2 text-center transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:w-[104px] sm:p-3 ${
         isSelected
-          ? "bg-blue-600 bg-opacity-30 border-2 border-blue-400"
-          : "hover:bg-blue-600 hover:bg-opacity-20"
+          ? "border-emerald-400/70 bg-emerald-400/15"
+          : "border-transparent hover:border-emerald-400/30 hover:bg-emerald-400/10"
       }`}
-      onDoubleClick={onDoubleClick}
-      onClick={() => setIsSelected(!isSelected)}
+      aria-label={`Open ${name}`}
+      onClick={() => setIsSelected((selected) => !selected)}
+      onDoubleClick={onOpen}
+      onPointerUp={(event) => {
+        if (event.pointerType !== "mouse") onOpen();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpen();
+        }
+      }}
     >
-      <div className="text-6xl">{icon}</div>
-      <span className="text-sm text-gray-100 text-center w-20 truncate">
+      <span className="grid size-13 place-items-center rounded-xl border border-emerald-400/25 bg-black/55 text-2xl text-emerald-300 shadow-[0_0_24px_rgba(16,185,129,0.12)] transition group-hover:border-emerald-300/55 group-hover:text-emerald-200 sm:size-15 sm:text-3xl">
+        {icon}
+      </span>
+      <span className="line-clamp-2 min-h-8 w-full text-[11px] leading-4 text-slate-100 drop-shadow sm:text-xs">
         {name}
       </span>
-    </div>
+    </button>
   );
 };

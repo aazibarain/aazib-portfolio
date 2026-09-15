@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+
+import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { CommandInput } from "./CommandInput";
 import { Output } from "./Output";
-import { projectsData } from "@/app/data/projects";
+import { projectsData, type Project } from "@/app/data/projects";
 import { aboutData } from "@/app/data/about";
 import { skillsData } from "@/app/data/skills";
 import { experienceData } from "@/app/data/experience";
@@ -10,29 +12,38 @@ import { contactData, helpCommands } from "@/app/data/contact";
 
 interface TerminalEntry {
   command: string;
-  output: (string | React.ReactNode)[];
+  output: ReactNode[];
   isError?: boolean;
 }
 
 interface TerminalProps {
-  onProjectSelect?: (project: typeof projectsData[0]) => void;
-  onOpenApp?: (appId: string) => void;
+  onProjectSelect?: (project: Project) => void;
+  onOpenApp?: (appId: "about" | "skills" | "experience" | "contact") => void;
 }
 
-export const Terminal: React.FC<TerminalProps> = ({ onProjectSelect, onOpenApp }) => {
+const promptLine = (
+  <span className="text-slate-300">
+    Run <span className="text-amber-300">help</span> to list commands, or{" "}
+    <span className="text-amber-300">projects</span> to browse my work.
+  </span>
+);
+
+export const Terminal = ({ onProjectSelect, onOpenApp }: TerminalProps) => {
   const [entries, setEntries] = useState<TerminalEntry[]>([
     {
       command: "",
       output: [
-        "Welcome to Aazib's Terminal Portfolio!",
-        "Type 'help' to see available commands.",
-        "",
+        <span key="banner" className="font-semibold text-emerald-200">
+          AazibOS v2.0 · AI Engineer portfolio
+        </span>,
+        <span key="status" className="text-slate-400">
+          System ready. Portfolio synced with the latest CV.
+        </span>,
+        promptLine,
       ],
-      isError: false,
     },
   ]);
   const [history, setHistory] = useState<string[]>([]);
-  const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null);
   const scrollEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,117 +52,162 @@ export const Terminal: React.FC<TerminalProps> = ({ onProjectSelect, onOpenApp }
 
   const executeCommand = (command: string) => {
     const cmd = command.toLowerCase().trim();
-    let output: (string | React.ReactNode)[] = [];
+    let output: ReactNode[] = [];
     let isError = false;
 
     if (cmd === "help" || cmd === "ls") {
-      output.push("Available Commands:\n");
-      helpCommands.forEach((h) => {
-        output.push(`  ${h.command.padEnd(15)} - ${h.description}`);
-      });
+      output = [
+        <span key="heading" className="text-emerald-200">
+          Available commands
+        </span>,
+        ...helpCommands.map((item) => (
+          <span key={item.command}>
+            <span className="inline-block w-36 text-amber-300">{item.command}</span>
+            <span className="text-slate-400">{item.description}</span>
+          </span>
+        )),
+      ];
     } else if (cmd === "about") {
-      output.push(`Name: ${aboutData.name}`);
-      output.push(`Role: ${aboutData.role}`);
-      output.push("");
-      output.push("Bio:");
-      output.push(aboutData.bio);
-      output.push("");
-      output.push("Opening About app...");
-      // auto-open About window if host provides handler
-      setTimeout(() => {
-        if (onOpenApp) onOpenApp("about");
-      }, 300);
+      output = [
+        `${aboutData.name} · ${aboutData.role}`,
+        aboutData.bio,
+        <span key="opening" className="text-slate-400">Opening About...</span>,
+      ];
+      window.setTimeout(() => onOpenApp?.("about"), 200);
     } else if (cmd === "skills") {
-      output.push("Skills Available:");
-      output.push("");
-      Object.entries(skillsData).forEach(([cat, items]) => {
-        output.push(`${cat.toUpperCase()}:`);
-        (items as string[]).forEach((s) => output.push(`  • ${s}`));
-        output.push("");
-      });
+      output = [
+        <span key="heading" className="text-emerald-200">Technical profile</span>,
+        ...Object.entries(skillsData).flatMap(([category, items]) => [
+          <span key={`${category}-heading`} className="mt-2 text-amber-300">
+            {category.replace(/([A-Z])/g, " $1").toUpperCase()}
+          </span>,
+          <span key={`${category}-items`} className="text-slate-300">
+            {items.join(" · ")}
+          </span>,
+        ]),
+        <span key="opening" className="mt-2 text-slate-400">Opening Skills...</span>,
+      ];
+      window.setTimeout(() => onOpenApp?.("skills"), 200);
     } else if (cmd === "projects") {
-      output.push("Available Projects:\n");
-      projectsData.forEach((proj, idx) => {
-        output.push(`[${idx + 1}] ${proj.name}`);
-        output.push(`    ${proj.description}`);
-        output.push(`    Tech: ${proj.tech.join(", ")}`);
-        output.push("");
-      });
-      output.push("Interactive: Type 'open <number>' to open a project");
-    } else if (cmd.startsWith("open ")) {
-      const projNum = parseInt(cmd.split(" ")[1]) - 1;
-      if (projNum >= 0 && projNum < projectsData.length) {
-        output.push(`Opening ${projectsData[projNum].name}...`);
-        setTimeout(() => {
-          if (onProjectSelect) {
-            onProjectSelect(projectsData[projNum]);
-          }
-        }, 300);
+      output = [
+        <span key="heading" className="text-emerald-200">
+          Projects ({projectsData.length})
+        </span>,
+        ...projectsData.flatMap((project, index) => [
+          <span key={`${project.id}-title`} className="mt-2 text-amber-300">
+            [{index + 1}] {project.name} · {project.year}
+          </span>,
+          <span key={`${project.id}-summary`} className="text-slate-400">
+            {project.shortDescription}
+          </span>,
+        ]),
+        <span key="hint" className="mt-2 text-slate-300">
+          Type <span className="text-amber-300">open &lt;number&gt;</span> to inspect a project.
+        </span>,
+      ];
+    } else if (/^open\s+\d+$/.test(cmd)) {
+      const projectIndex = Number.parseInt(cmd.split(/\s+/)[1], 10) - 1;
+      const project = projectsData[projectIndex];
+
+      if (project) {
+        output = [`Opening ${project.name}...`];
+        window.setTimeout(() => onProjectSelect?.(project), 200);
       } else {
-        output.push(`Invalid project number. Use 'projects' to see options.`);
+        output = ["Project not found. Run 'projects' to see valid numbers."];
         isError = true;
       }
     } else if (cmd === "experience") {
-      output.push("Professional Experience:\n");
-      experienceData.forEach((exp) => {
-        output.push(`${exp.title} @ ${exp.company}`);
-        output.push(`${exp.period}`);
-        output.push(exp.description);
-        output.push("Highlights:");
-        exp.highlights.forEach((h) => output.push(`  • ${h}`));
-        output.push("");
-      });
+      output = experienceData.flatMap((experience) => [
+        <span key={`${experience.company}-title`} className="text-emerald-200">
+          {experience.title} @ {experience.company}
+        </span>,
+        <span key={`${experience.company}-period`} className="text-amber-300">
+          {experience.period}
+        </span>,
+        <span key={`${experience.company}-description`} className="text-slate-300">
+          {experience.description}
+        </span>,
+        ...experience.highlights.map((highlight) => (
+          <span key={highlight} className="text-slate-400">▸ {highlight}</span>
+        )),
+      ]);
+      output.push(
+        <span key="opening" className="mt-2 text-slate-400">Opening Experience...</span>,
+      );
+      window.setTimeout(() => onOpenApp?.("experience"), 200);
     } else if (cmd === "contact") {
-      output.push("Contact Information:\n");
-      if (contactData.email) output.push(`Email: ${contactData.email}`);
-      if ((contactData as any).phoneNo)
-        output.push(`Phone: ${(contactData as any).phoneNo}`);
-      if (contactData.github) output.push(`GitHub: ${contactData.github}`);
-      if (contactData.linkedin) output.push(`LinkedIn: ${contactData.linkedin}`);
-      if ((contactData as any).fiverr)
-        output.push(`Fiverr: ${(contactData as any).fiverr}`);
-      if ((contactData as any).twitter)
-        output.push(`Twitter: ${(contactData as any).twitter}`);
+      output = [
+        `Email: ${contactData.email}`,
+        `Phone: ${contactData.phoneNo}`,
+        `Location: ${contactData.location}`,
+        `GitHub: ${contactData.github}`,
+        `LinkedIn: ${contactData.linkedin}`,
+        <span key="opening" className="text-slate-400">Opening Contact...</span>,
+      ];
+      window.setTimeout(() => onOpenApp?.("contact"), 200);
+    } else if (cmd === "resume") {
+      output = [
+        <a
+          key="resume"
+          href={contactData.resume}
+          target="_blank"
+          rel="noreferrer"
+          className="text-amber-300 underline decoration-amber-300/40 underline-offset-4"
+        >
+          Open Aazib Abdullah&apos;s latest CV
+        </a>,
+      ];
+      window.open(contactData.resume, "_blank", "noopener,noreferrer");
     } else if (cmd === "whoami") {
-      output.push("aazib");
+      output = ["aazib · AI engineer · builder · researcher"];
     } else if (cmd === "clear") {
-      setEntries([{ command: "", output: [], isError: false }]);
+      setEntries([]);
       return;
     } else if (cmd === "") {
       return;
     } else {
-      output = [`command not found: ${command}`];
+      output = [
+        `command not found: ${command}`,
+        <span key="hint" className="text-slate-400">
+          Try <span className="text-amber-300">help</span> for available commands.
+        </span>,
+      ];
       isError = true;
     }
 
-    setHistory([...history, command]);
-    setEntries([...entries, { command, output, isError }]);
+    setHistory((currentHistory) => [...currentHistory, command]);
+    setEntries((currentEntries) => [
+      ...currentEntries,
+      { command, output, isError },
+    ]);
   };
 
   return (
-    <div className="w-full h-full bg-black text-green-400 font-mono flex flex-col">
-      <div className="flex-1 overflow-auto space-y-3 p-4">
-        {entries.map((entry, idx) => (
-          <div key={idx} className="whitespace-pre-wrap">
+    <div className="flex h-full min-h-0 flex-col font-mono text-sm">
+      <div className="flex-1 space-y-4 overflow-auto pr-1">
+        {entries.map((entry, index) => (
+          <div key={`${entry.command}-${index}`} className="whitespace-pre-wrap">
             {entry.command && (
-              <div className="flex gap-2 items-center mb-2">
-                <span className="text-gray-500">$</span>
-                <span className="text-yellow-400">{entry.command}</span>
+              <div className="mb-2 flex items-center gap-2 text-xs sm:text-sm">
+                <span className="text-emerald-400">aazib@portfolio</span>
+                <span className="text-slate-500">:</span>
+                <span className="text-sky-300">~</span>
+                <span className="text-slate-500">$</span>
+                <span className="text-amber-300">{entry.command}</span>
               </div>
             )}
             {entry.output.length > 0 && (
-              <div className={`${entry.isError ? "text-red-400" : "text-green-300"} space-y-1`}>
-                <Output lines={entry.output} isError={entry.isError} />
+              <div className={entry.isError ? "text-rose-300" : "text-emerald-300"}>
+                <Output lines={entry.output} />
               </div>
             )}
           </div>
         ))}
         <div ref={scrollEndRef} />
       </div>
-      <div className="p-4 border-t border-gray-700">
+      <div className="mt-4 border-t border-emerald-400/15 pt-4">
         <CommandInput onSubmit={executeCommand} history={history} />
       </div>
     </div>
   );
 };
-

@@ -1,21 +1,41 @@
-import type { Metadata } from "next";
-import { Fira_Code } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-const firaCode = Fira_Code({
-  variable: "--font-code",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-});
-
 export const metadata: Metadata = {
-  title: "Aazib's Terminal Portfolio",
-  description: "A Linux terminal-style interactive portfolio website",
+  metadataBase: new URL("https://aazibabdullah.vercel.app"),
+  title: "Aazib Abdullah | AI Engineer",
+  description:
+    "AI Engineer building deep-learning, computer-vision, NLP, and model-backed full-stack applications.",
+  keywords: [
+    "Aazib Abdullah",
+    "AI Engineer",
+    "Machine Learning Engineer",
+    "Deep Learning",
+    "Computer Vision",
+    "Next.js Developer",
+  ],
+  authors: [{ name: "Aazib Abdullah" }],
   openGraph: {
-    title: "Aazib's Terminal Portfolio",
-    description: "A Linux terminal-style interactive portfolio website",
+    title: "Aazib Abdullah | AI Engineer",
+    description:
+      "Explore AI, machine-learning, security, and full-stack projects inside an interactive Linux-inspired portfolio.",
     type: "website",
+    url: "/",
+    siteName: "Aazib Abdullah Portfolio",
   },
+  twitter: {
+    card: "summary",
+    title: "Aazib Abdullah | AI Engineer",
+    description:
+      "AI and full-stack projects inside an interactive Linux-inspired portfolio.",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#020806",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -25,13 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="theme-color" content="#0d0d0d" />
-        <meta name="color-scheme" content="dark" />
-      </head>
-      <body className={`${firaCode.variable} antialiased`}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

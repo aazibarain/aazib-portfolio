@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import { FiGrid } from "react-icons/fi";
 
 interface TaskbarProps {
@@ -7,38 +7,51 @@ interface TaskbarProps {
     id: string;
     title: string;
   }>;
-  minimizedWindows: Set<string>;
+  minimizedWindows: string[];
+  focusedWindow: string | null;
   onWindowRestore: (id: string) => void;
   time: string;
 }
 
-export const Taskbar: React.FC<TaskbarProps> = ({
+export const Taskbar = ({
   windows,
   minimizedWindows,
+  focusedWindow,
   onWindowRestore,
   time,
-}) => {
+}: TaskbarProps) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t-2 border-gray-700 px-4 py-2 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <FiGrid size={20} className="text-green-400" />
-        <div className="flex gap-2">
-          {windows.map((win) => (
+    <footer className="fixed inset-x-0 bottom-0 z-[3000] flex h-14 items-center gap-3 border-t border-emerald-400/20 bg-[#06100d]/95 px-3 shadow-[0_-12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:px-4">
+      <div className="grid size-9 shrink-0 place-items-center rounded-lg border border-emerald-400/25 bg-emerald-400/10 text-emerald-300">
+        <FiGrid size={17} aria-hidden="true" />
+      </div>
+      <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1">
+        {windows.map((win) => {
+          const minimized = minimizedWindows.includes(win.id);
+          const focused = focusedWindow === win.id && !minimized;
+
+          return (
             <button
+              type="button"
               key={win.id}
               onClick={() => onWindowRestore(win.id)}
-              className={`px-3 py-1 text-xs rounded transition ${
-                minimizedWindows.has(win.id)
-                  ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                  : "bg-blue-600 text-white hover:bg-blue-500"
+              className={`max-w-44 shrink-0 truncate rounded-md border px-3 py-1.5 text-[11px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:text-xs ${
+                focused
+                  ? "border-emerald-400/50 bg-emerald-400/18 text-emerald-100"
+                  : minimized
+                    ? "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
+                    : "border-emerald-400/20 bg-[#0d211a] text-slate-300 hover:border-emerald-400/40"
               }`}
             >
               {win.title}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
-      <div className="text-xs text-gray-400">{time}</div>
-    </div>
+      <div className="shrink-0 text-right text-[10px] leading-4 text-slate-400 sm:text-xs">
+        <div>PKT</div>
+        <div className="text-emerald-300">{time}</div>
+      </div>
+    </footer>
   );
 };

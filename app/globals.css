@@ -7,7 +7,8 @@
   --terminal-dim-green: #00aa44;
   --terminal-accent: #ffcc00;
   --terminal-error: #ff0033;
-  --font-mono: "Fira Code", "JetBrains Mono", monospace;
+  --font-mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo, Monaco,
+    Consolas, "Liberation Mono", monospace;
 }
 
 @theme inline {
@@ -30,7 +31,7 @@ body {
   font-family: var(--font-mono);
   overflow-x: hidden;
   line-height: 1.6;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.015em;
 }
 
 * {
@@ -54,6 +55,87 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--terminal-green);
+}
+
+::selection {
+  background: rgba(52, 211, 153, 0.28);
+  color: #ecfdf5;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.85rem 1rem;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.contact-card svg {
+  flex: 0 0 auto;
+  color: #34d399;
+}
+
+.contact-card span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-card:hover {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.08);
+  color: #ecfdf5;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.9rem;
+  color: #a7f3d0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(52, 211, 153, 0.6);
+  background: rgba(52, 211, 153, 0.08);
+}
+
+.action-button-primary {
+  border-color: rgba(52, 211, 153, 0.42);
+  background: rgba(52, 211, 153, 0.13);
+  color: #d1fae5;
+}
+
+@media (max-width: 767px) {
+  .portfolio-window {
+    inset: 8px 8px 64px !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Global animations */

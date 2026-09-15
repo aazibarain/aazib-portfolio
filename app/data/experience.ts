@@ -8,25 +8,15 @@ export interface Experience {
 
 export const experienceData: Experience[] = [
   {
-    title: "Freelance Software Developer",
+    title: "Freelance Developer",
     company: "Fiverr",
-    period: "2023 - Present",
-    description: "Delivered custom software solutions and web applications for clients worldwide.",
+    period: "Aug 2023 - Present",
+    description:
+      "Delivering custom software and Python/ML-based solutions for international clients, from requirements gathering through final delivery.",
     highlights: [
-    "Built full-stack web applications using React, Node.js, and MongoDB",
-    "Integrated payment systems and REST APIs for multiple projects",
-    "Provided ongoing support and feature enhancements for clients",
-    ],
-  },
-  {
-    title: "Freelance Software Developer",
-    company: "Upwork",
-    period: "2023 - Present",
-    description: "Completed diverse client projects ranging from desktop apps to web solutions.",
-    highlights: [
-    "Developed responsive web apps and dashboards using Next.js and Tailwind CSS",
-    "Optimized performance and database queries for client systems",
-    "Delivered projects on time while maintaining high client satisfaction",
+      "Build and debug data-processing scripts and applications in Python, C/C++, and Java.",
+      "Translate client requirements into reliable, maintainable software solutions.",
+      "Earned Level 1 Seller status through clear communication and consistent delivery quality.",
     ],
   },
 ];

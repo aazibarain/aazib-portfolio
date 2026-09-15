@@ -3,10 +3,9 @@ import React from "react";
 
 interface OutputProps {
   lines: (string | React.ReactNode)[];
-  isError?: boolean;
 }
 
-export const Output: React.FC<OutputProps> = ({ lines, isError = false }) => {
+export const Output: React.FC<OutputProps> = ({ lines }) => {
   return (
     <div>
       {lines.map((line, index) => (
