@@ -15,6 +15,36 @@ export interface Project {
 
 export const projectsData: Project[] = [
   {
+    id: "arxiv-sentinel",
+    name: "ArXiv Sentinel",
+    shortDescription:
+      "Autonomous AI-security research monitor with semantic relevance, novelty tracking, and grounded paper Q&A.",
+    description:
+      "An autonomous research-monitoring agent for adversarial machine learning and AI security. It discovers papers from arXiv, Semantic Scholar, and OpenAlex, reconciles duplicate records, ranks semantic relevance, measures novelty against prior work, and serves grounded summaries and corpus Q&A through a production dashboard.",
+    highlights: [
+      "Combines arXiv, Semantic Scholar, and OpenAlex behind a normalized paper schema.",
+      "Uses semantic embeddings and persistent vector memory for relevance and explainable novelty decisions.",
+      "Generates Gemini summaries and corpus answers with programmatic claim-to-source grounding checks.",
+      "Runs scheduled ingestion with Vercel Cron and stores production digests and the rolling corpus in Vercel Blob.",
+    ],
+    tech: [
+      "Python",
+      "FastAPI",
+      "Next.js",
+      "TypeScript",
+      "Gemini",
+      "Sentence Transformers",
+      "Chroma",
+      "Vercel Blob",
+    ],
+    github: "https://github.com/aazibarain/arxiv-sentinel",
+    live: "https://arxiv-sentinel-seven.vercel.app",
+    year: 2026,
+    category: "AI Agents",
+    featured: true,
+    icon: "search",
+  },
+  {
     id: "adversarial-robustness",
     name: "AI Model Robustness & Defense Toolkit",
     shortDescription:

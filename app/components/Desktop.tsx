@@ -11,6 +11,7 @@ import {
   FiMail,
   FiMessageSquare,
   FiPackage,
+  FiSearch,
   FiShield,
   FiTerminal,
   FiTool,
@@ -69,6 +70,8 @@ const projectIcon = (icon: Project["icon"]) => {
       return <FiCpu />;
     case "sparkles":
       return <FiZap />;
+    case "search":
+      return <FiSearch />;
     default:
       return <FiPackage />;
   }
